@@ -57,13 +57,13 @@ const UserSchema = new mongoose.Schema({
         {
             type: String
         }
-    ],
-    path:{
-        type : String
-    },
-    profile:{
+    ], 
+    publicId:{
         type: String
-    }
+    },
+    secure_url:{
+         type: String
+    }  
     
 },{timestamps:true});
 
