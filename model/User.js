@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-   
+
     AccountType: {
         type: String,
     },
@@ -38,34 +38,35 @@ const UserSchema = new mongoose.Schema({
     totalFriends: {
         type: String
     },
-    totalPost:{
-        type:String
-    },
-    following:[
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
-    follower:[
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
-    memory:[
-        {
-            type: String
-        }
-    ], 
-    publicId:{
+    totalPost: {
         type: String
     },
-    secure_url:{
-         type: String
-    }  
-    
-},{timestamps:true});
+    following: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+    follower: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+    memory: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Memory'
+        }
+    ],
+    publicId: {
+        type: String
+    },
+    secure_url: {
+        type: String
+    }
 
-const User = mongoose.model("User",UserSchema);
+}, { timestamps: true });
+
+const User = mongoose.model("User", UserSchema);
 export default User;
