@@ -16,7 +16,8 @@ export default class memoryController {
                 const image = await cloudinary.uploader.upload(mImg.tempFilePath);
                 const memory = await Memory.create({
                     user: userId,
-                    img: image.url
+                    img: image.url,
+                    public_id: image.public_id
                 });
                 user.memory.push(memory);
                 user.save();
@@ -31,6 +32,28 @@ export default class memoryController {
     }
 
     getAllMemory = async (req, res) => {
+        try {
+            const memory = await Memory.find({})
+            return res.json({ Memory: memory });
+        } catch (err) {
+            console.log("there is error with finding memory ", err);
+            return;
+
+        }
+    }
+
+    getParticular = async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const memory = await Memory.find({ user: userId });
+            return res.json({ Memory: memory })
+        } catch (err) {
+            console.log("There is Error ", err);
+            return;
+        }
+    }
+
+    deleteMemory = async (req, res) => {
 
     }
 }
