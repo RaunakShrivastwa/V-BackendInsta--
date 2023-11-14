@@ -62,6 +62,16 @@ export default class UserController {
         }
     };
 
+    // getSimple User
+    getSimple = async (req, res) => {
+        try {
+            return res.json(await User.find({}));
+        } catch (err) {
+            console.log("there is Errror ", err);
+            return;
+        }
+    }
+
     // for the Getting Indivisual User
     getUser = async (req, res) => {
         try {
@@ -107,6 +117,7 @@ export default class UserController {
             console.error('There was an error while updating the user and image:', err);
             return res.status(500).json({ message: 'Internal Server Error' });
         }
-    };
+    }
 
 }
+

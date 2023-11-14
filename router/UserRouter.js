@@ -8,7 +8,8 @@ router.post('/saveUser', userController.saveUser)
 router.get('/getAllUser', userController.getAllUser)
 router.put('/update/:id', userController.updateUser)
 router.delete('/delete/:id', userController.deleteUser)
-router.get('/getUser/:id', userController.getUser)
+router.get('/getUser/:id', userController.getUser);
+router.get('/getSimple', userController.getSimple)
 
 
 

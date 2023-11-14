@@ -1,15 +1,18 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const friendSchema = new mongoose.Schema({
-    nowFollow:{
+    followNow: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: 'User'
     },
-    yourId:{
+    byMe: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: 'User'
     }
-},{timestamps:true});
-const Friends = mongoose.Schema('Friends',friendSchema);
+}, {
+    timestamps: true
+});
+
+const Friends = mongoose.model('Friends', friendSchema);
 
 export default Friends;
