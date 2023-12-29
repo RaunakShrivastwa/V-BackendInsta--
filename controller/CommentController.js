@@ -1,5 +1,7 @@
 import Comment from "../model/Comment.js";
 import Post from '../model/Post.js';
+import User from '../model/User.js';
+
 export default class commentController {
 
     // for the Add Comment
@@ -8,9 +10,15 @@ export default class commentController {
         try {
             const post = await Post.findById(req.body.post);
             if (post) {
+                const user = await User.findById(req.body.user);
+                if(!user){
+                    return res.json({Message:`Invalide User so That Comment will not added at !!!!! ${post.content}`})
+                }
                 const comment = await Comment.create(req.body);
                 post.comments.push(comment);
                 post.save();
+                user.comments.push(comment);
+                user.save();
                 return res.json(comment);
             }
         } catch (err) {
@@ -66,7 +74,7 @@ export default class commentController {
             if (comment) {
                 const postId = comment.post;
                 await Post.findByIdAndRemove(postId, { $pull: { comments: commentId } })
-                return res.json(comment)
+                return res.json({Deleted:true,comment})
             }
         } catch (err) {
             console.log("There is Error ", err);

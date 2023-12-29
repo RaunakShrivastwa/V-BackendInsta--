@@ -8,10 +8,14 @@ import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import session from 'express-session';
 import passport from 'passport';
-import passPortLocal from './Security/Passport-local.js';
 import MongoStore from 'connect-mongo';
 import { pid } from 'process';
 import cookieParser from 'cookie-parser';
+import ejs from 'ejs'
+// for the authentication
+import passPortLocal from './Security/Passport-local.js';
+import passPortGoogle  from './Security/passport-google.js'
+import passportTwitter from './Security/passport-twitter.js'
 
 if (cluster.isPrimary) {
     for (let i = 0; i < os.cpus().length; i++) {
@@ -28,7 +32,8 @@ if (cluster.isPrimary) {
     }))
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
-
+    app.set('view engine','ejs');
+    app.set('views','./views')
     // use Router to handle All HTTP
 
     app.use(session({
@@ -51,6 +56,14 @@ if (cluster.isPrimary) {
     }));
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(
+        function(req,res,next){
+            if(req.isAuthenticated()){
+                res.locals.user=req.user
+            }
+            next();
+        }
+    )
     app.use('/', router)
     app.listen(PORT, () => {
         console.log(`Server is running at port ${PORT} with process ID ${pid}`)

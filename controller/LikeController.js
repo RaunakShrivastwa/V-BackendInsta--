@@ -1,11 +1,17 @@
 import Post from '../model/Post.js';
 import Comment from '../model/Comment.js';
 import Like from '../model/Like.js';
+import User from '../model/User.js'
 
 export default class LikeController {
     // AddLike
     addLike = async (req, res) => {
         try {
+            const user = await User.findById(req.body.user);
+            console.log(user);
+            if(!user){
+                return res.json({Message:'Invalide User , Like can not be Added !!!!!'})
+            }
             const type = req.query.type;
             let likeble;
             if (type == 'Post') {
@@ -35,14 +41,16 @@ export default class LikeController {
                 })
                 likeble.likes.push(like)
                 likeble.save();
+                user.likes.push(like);
+                user.save();
                 return res.json({
-                    Message: 'Like Added',
+                    Message: `Like added By ${user.name}`,
                     LIke: Like
                 })
             }
         } catch (err) {
-            console.log("there is error ", err);
-            return;
+           
+            return res.json({Message:err.trace()})
         }
     }
 

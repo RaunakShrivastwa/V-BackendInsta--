@@ -28,6 +28,8 @@ export default class PostController {
                 }
 
                 const post = await Post.create(postData);
+                user.post.push(post);
+                user.save();
                 return res.json({
                     postAdded: post
                 })
@@ -82,9 +84,9 @@ export default class PostController {
             if (post) {
                 await Comment.deleteMany({ post: postId });
                 post.deleteOne();
-                return res.json(post)
+                return res.json({Deleted:true,post});
             }
-            return res.json(post);
+            return res.json({Deleted:true,post});
         } catch (err) {
             console.log("there is Error ", err);
         }

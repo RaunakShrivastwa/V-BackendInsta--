@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import PasswordEncrypt from "../config/PasswordEncrypt.js";
+const config = new PasswordEncrypt();
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -7,8 +8,9 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required:true
     },
+      
     email: {
         type: String,
         required: true
@@ -57,6 +59,24 @@ const UserSchema = new mongoose.Schema({
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Memory'
+        }
+    ],
+    post:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Post'
+        }
+    ],
+    comments:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment'
+        }
+    ],
+    likes:[
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Like'
         }
     ],
     publicId: {

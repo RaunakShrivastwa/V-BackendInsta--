@@ -16,10 +16,8 @@ router.use('/post', PostRouter);
 router.use('/comment', commentRouter);
 router.use('/like', LikeRouter);
 router.use('/friend', friendRouter);
-router.post('/login', passport.authenticate('local', { failureRedirect: '/signup' }), userLogin.loginuser);
-router.get('/signup', (req, res) => {
-    return res.json({ Message: 'Login Failed' })
-})
+
+
 
 router.get('/logout', userLogin.logout)
 

@@ -1,13 +1,16 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from '../model/User.js'
-
+import config from '../config/PasswordEncrypt.js'
+const Decrypt = new config();
 passport.use(new LocalStrategy({
     usernameField: 'email'
 },
     function (email, passport, done) {
+        
         User.findOne({ email: email }).then(user => {
-            if (!user || user.password != passport) {
+            
+            if (!user || Decrypt.decryptText(user.password,'KeepCoding') != passport) {
                 console.log("Invalide User !!!!!");
                 return done(null, false);
             }
@@ -44,7 +47,7 @@ passport.cheakAuthentication = function (req, res, next) {
 
 passport.setAunthenticatedUser = function (req, res, next) {
     if (req.isAuthenticated()) {
-        res.locals.user = req.user
+        res.locals.user = req.user;
     }
 }
 

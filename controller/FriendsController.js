@@ -6,7 +6,7 @@ export default class friendController {
         try {
             const frnd = await User.findById(req.body.followNow);
             const byMe = await User.findById(req.body.byMe);
-
+            console.log(frnd);
             if (frnd && byMe) {
                 const relation = await Friend.findOne({
                     followNow: req.body.followNow,

@@ -2,6 +2,21 @@ import User from '../model/User.js'
 import path from 'path';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
+import PasswordEncrypt from '../config/PasswordEncrypt.js';
+import AccountMailer from '../Mailer/comment/AccountMailer.js'
+import { LocalStorage } from 'node-localstorage';
+
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+// Set up a local storage instance (it uses a temporary file for storage)
+const localStorage = new LocalStorage('./scratch');
+
+const mail = new AccountMailer();
+
 dotenv.config();
 cloudinary.config({
     cloud_name: process.env.cloud_name,
@@ -10,34 +25,78 @@ cloudinary.config({
 });
 export default class UserController {
     // for the save User
+    config = new PasswordEncrypt();
     saveUser = async (req, res) => {
         try {
+            
+            if (!this.isValidPassword(req.body.password)) {
+                return res.status(400).json({ error: 'Password must have at least one letter (uppercase or lowercase), one digit, and one special symbol' });
+            }
+            const date = new Date();
             const file = req.files.avtar;
             const data = {
                 name: req.body.name,
-                password: req.body.password,
+                password: this.config.encryptText(req.body.password, 'KeepCoding'),
                 email: req.body.email,
                 AccountType: req.body.AccountType,
                 bio: req.body.bio
             }
             if (file) {
-                const img = await cloudinary.uploader.upload(file.tempFilePath);
-                data.avtar = img.url;
-                data.publicId = img.public_id;
-                data.secure_url = img.secure_url
+                data.avtar = file;                
             }
-            const user = await User.create(data);
-            return res.json({ User: user })
+            data.password = this.config.encryptText(req.body.password, 'KeepCoding');
+            const randomNumber = Math.floor(100000 + Math.random() * 900000);
+            data.OTP = randomNumber;
+            data.time = date.getMinutes();
+            const exist = localStorage.getItem('user');
+            if (exist) {
+                localStorage.removeItem('user')
+            }
+            const userJsonString = JSON.stringify(data);
+            localStorage.setItem('user', userJsonString);
+            const user = localStorage.getItem('user');
+            mail.sendMail(data)
+            return res.json({ User: " 6 degit OTP Send over Your Mail, Cheak and Varify before OTP Expire" })
         } catch (err) {
-            console.log("There is Problem with error ", err);
-            return;
+            console.log(err);
+            return res.json(err)
         }
+    }
+
+    varify = async (req, res) => {
+        const OTP = req.body.OTP;
+        const user1 = localStorage.getItem('user');
+        const user = JSON.parse(user1);
+        const file = user.avtar;
+        const date = new Date();
+        let current = date.getMinutes();   
+        if ((current-user.time)<=1) {
+            if (file) {
+                const img = await cloudinary.uploader.upload(file.tempFilePath);
+                user.avtar = img.url;
+                user.publicId = img.public_id;
+                user.secure_url = img.secure_url
+            }
+
+            if (user.OTP == OTP) {
+                delete user.OTP;
+                const userData = await User.create(user);
+                
+                return res.json({ Varify: "Account Varified", Message: userData })
+            }
+            return res.json({ Messgae: "OTP not Matched" })
+
+        } else {
+            return res.json({Message:"Sorry OTP Expires"})
+        }
+
+
     }
 
     // for the Get All Data
     getAllUser = async (req, res) => {
         try {
-            const user = await User.find({}).populate('memory', 'img')
+            const user = await User.find({}).populate('memory', 'img').populate('post').populate('comments').populate('likes')
             return res.json({
                 message: user
             })
@@ -67,6 +126,8 @@ export default class UserController {
     // getSimple User
     getSimple = async (req, res) => {
         try {
+
+            console.log("new path", __dirname);
             return res.json(await User.find({}));
         } catch (err) {
             console.log("there is Errror ", err);
@@ -119,6 +180,17 @@ export default class UserController {
             console.error('There was an error while updating the user and image:', err);
             return res.status(500).json({ message: 'Internal Server Error' });
         }
+    }
+
+    isValidPassword = (password) => {
+        const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/;
+        return regex.test(password);
+    };
+
+    page = (req, res) => {
+        return res.render('home', {
+            title: 'shubham sir'
+        })
     }
 
 }

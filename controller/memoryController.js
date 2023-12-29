@@ -45,7 +45,7 @@ export default class memoryController {
     getParticular = async (req, res) => {
         try {
             const userId = req.params.id;
-            const memory = await Memory.find({ user: userId });
+            const memory = await Memory.find({ user: userId }).populate('user');
             return res.json({ Memory: memory })
         } catch (err) {
             console.log("There is Error ", err);
