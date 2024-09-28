@@ -23,13 +23,18 @@ router.get('/auth/google',passport.authenticate('google',{scope:['profile','emai
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect: '/user/failed'}),userLogin.loginuser);
 
 // for local Login Router
-router.post('/login', passport.authenticate('local', {failureRedirect:'/user/failed' }), userLogin.loginuser);
+router.post('/login', passport.authenticate('local', {failureRedirect:'/user/failed',session:true }), userLogin.loginuser);
 
 // for the twitter
-// for the google authentication
 router.get('/auth/twitter',passport.authenticate('twitter',{scope:['profile','email']}));
 router.get('/auth/twitter/callback',passport.authenticate('twitter',{failureRedirect: '/user/failed'}),userLogin.loginuser);
 
+// for the facebook
+router.get('/auth/facebook',passport.authenticate('facebook',{scope:['public_profile','email']}));
+router.get('/auth/facebook/callback',passport.authenticate('facebook',{failureRedirect: '/user/failed'}),userLogin.loginuser);
+
+// mobile number
+router.post('/phone',userLogin.phoneOTP)
 
 
 //if login gonn fail

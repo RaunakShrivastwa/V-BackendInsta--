@@ -6,6 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    hello <%= title%>
+    <h3>Your All Friends</h3>
+    <% for (data of userData){%>
+
+       <div> <a href="/chatNow/chat/<%= data.name%>"><%= data.name %></a></div>
+           
+       <%} %>
 </body>
 </html>

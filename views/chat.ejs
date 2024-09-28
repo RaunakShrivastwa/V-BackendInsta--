@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <title>Chat Now</title>
+</head>
+
+<body>
+    <div class="container bg-primary m-auto p-4">
+        <div class="row">
+            <div class="">
+                <section id="screen" class="bg-danger mb-4" style="height: 80vh;overflow-y: auto;">
+                    <p id="name"></p>
+                    <!-- <p id="left" class="left-message text-left bg-success w-auto">hello</p>
+                    <p id="right" class="right-message text-right">Shubham</p>                   -->
+                </section>
+            </div>
+           
+        </div>
+        <input type="text" placeholder="Enter Message" id="inputMessage">
+        <button class="btn btn-primary" id="send">Send</button>
+    </div>
+
+    <script src="http://localhost:4000/socket.io/socket.io.js"></script>
+   
+    <script>
+        const socket = io.connect('http://localhost:4000');
+        const inputMessage = document.getElementById('inputMessage');
+        const messageList = document.getElementById('screen');
+        const sendButton = document.getElementById('send');
+        const name = prompt("Enter Your Name")
+        document.getElementById('name').innerText = name;
+        sendButton.addEventListener('click', () => {
+            const msg = inputMessage.value;
+            console.log(msg);
+            if (msg) {
+                // For a private message, replace this prompt with an input/select for recipient name
+                const recipient = name
+                socket.emit('private_message', {
+                    recipient: recipient,
+                    message: msg
+                });
+
+                const messageElement = document.createElement("div");
+                messageElement.style.backgroundColor = "cyan";
+                messageElement.innerText = "You" + ": " + msg;
+                messageList.appendChild(messageElement);
+                inputMessage.value = '';
+            }
+        })
+
+        socket.emit('name', name)
+
+        socket.on('private_message', (data) => {
+            const messageElement = document.createElement("div");
+            messageElement.innerText = data.sender + ": " + data.message;
+            messageElement.style.textAlign = "right"; // Align text to the right
+            messageElement.style.backgroundColor = "green";
+            messageList.appendChild(messageElement);
+        })
+    </script>
+</body>
+
+</html>

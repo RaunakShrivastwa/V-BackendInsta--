@@ -8,9 +8,9 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required:true
+        required: true
     },
-      
+
     email: {
         type: String,
         required: true
@@ -61,19 +61,19 @@ const UserSchema = new mongoose.Schema({
             ref: 'Memory'
         }
     ],
-    post:[
+    post: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Post'
         }
     ],
-    comments:[
+    comments: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Comment'
         }
     ],
-    likes:[
+    likes: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Like'

@@ -28,33 +28,35 @@ export default class UserController {
     config = new PasswordEncrypt();
     saveUser = async (req, res) => {
         try {
-            
+
             if (!this.isValidPassword(req.body.password)) {
                 return res.status(400).json({ error: 'Password must have at least one letter (uppercase or lowercase), one digit, and one special symbol' });
             }
+            console.log(req.body);
+
             const date = new Date();
-            const file = req.files.avtar;
+            const file = 'no file';
             const data = {
                 name: req.body.name,
                 password: this.config.encryptText(req.body.password, 'KeepCoding'),
                 email: req.body.email,
-                AccountType: req.body.AccountType,
-                bio: req.body.bio
+                AccountType: req.body.AccountType || 'Normal',
+                bio: req.body.bio || 'This is Dummy User'
             }
             if (file) {
-                data.avtar = file;                
+                data.avtar = file;
             }
             data.password = this.config.encryptText(req.body.password, 'KeepCoding');
             const randomNumber = Math.floor(100000 + Math.random() * 900000);
             data.OTP = randomNumber;
             data.time = date.getMinutes();
-            const exist = localStorage.getItem('user');
+            const exist = localStorage.getItem('user1');
             if (exist) {
-                localStorage.removeItem('user')
+                localStorage.removeItem('user1')
             }
             const userJsonString = JSON.stringify(data);
-            localStorage.setItem('user', userJsonString);
-            const user = localStorage.getItem('user');
+            localStorage.setItem('user1', userJsonString);
+            const user = localStorage.getItem('user1');
             mail.sendMail(data)
             return res.json({ User: " 6 degit OTP Send over Your Mail, Cheak and Varify before OTP Expire" })
         } catch (err) {
@@ -65,29 +67,31 @@ export default class UserController {
 
     varify = async (req, res) => {
         const OTP = req.body.OTP;
-        const user1 = localStorage.getItem('user');
+        const user1 = localStorage.getItem('user1');
         const user = JSON.parse(user1);
-        const file = user.avtar;
+        console.log("user from local Storage", user);
+        // const file = user.avtar.name;
         const date = new Date();
-        let current = date.getMinutes();   
-        if ((current-user.time)<=1) {
-            if (file) {
-                const img = await cloudinary.uploader.upload(file.tempFilePath);
-                user.avtar = img.url;
-                user.publicId = img.public_id;
-                user.secure_url = img.secure_url
-            }
+        let current = date.getMinutes();
+        console.log(current);
+        if ((Math.abs(current - user.time)) <= 5) {
+            // if (user.avtar) {
+            //     const img = await cloudinary.uploader.upload(user.avtar.tempFilePath);
+            //     user.avtar = img.url;
+            //     user.publicId = img.public_id;
+            //     user.secure_url = img.secure_url
+            // }
 
             if (user.OTP == OTP) {
                 delete user.OTP;
                 const userData = await User.create(user);
-                
+
                 return res.json({ Varify: "Account Varified", Message: userData })
             }
             return res.json({ Messgae: "OTP not Matched" })
 
         } else {
-            return res.json({Message:"Sorry OTP Expires"})
+            return res.json({ Message: "Sorry OTP Expires" })
         }
 
 
@@ -131,7 +135,6 @@ export default class UserController {
             return res.json(await User.find({}));
         } catch (err) {
             console.log("there is Errror ", err);
-            return;
         }
     }
 
@@ -142,7 +145,6 @@ export default class UserController {
             return res.json({ User: user })
         } catch (err) {
             console.log("There is problem with Geting user", err);
-            return;
         }
     }
 
@@ -187,9 +189,11 @@ export default class UserController {
         return regex.test(password);
     };
 
-    page = (req, res) => {
+    page = async (req, res) => {
+        const user = await User.find({})
+        console.log(user);
         return res.render('home', {
-            title: 'shubham sir'
+            userData: user
         })
     }
 

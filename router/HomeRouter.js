@@ -7,6 +7,7 @@ import LikeRouter from './likeRouter.js';
 import friendRouter from './FriendRouter.js';
 import LoginUser from '../controller/LoginUser.js';
 import passport from 'passport';
+import chatRouter from './ChatRouter.js'
 
 const router = express.Router();
 const userLogin = new LoginUser();
@@ -16,6 +17,7 @@ router.use('/post', PostRouter);
 router.use('/comment', commentRouter);
 router.use('/like', LikeRouter);
 router.use('/friend', friendRouter);
+router.use('/chatNow',chatRouter)
 
 
 
