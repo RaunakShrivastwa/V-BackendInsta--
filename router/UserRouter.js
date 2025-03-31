@@ -10,7 +10,7 @@ const router = express.Router();
 const userLogin = new loginUser();
 router.get('/addUser', (req, res) => { return res.render('AddUser') })
 router.post('/saveUser', userController.saveUser)
-router.get('/getAllUser', passport.cheakAuthentication,userController.getAllUser)
+router.get('/getAllUser',userController.getAllUser)
 router.put('/update/:id', userController.updateUser)
 router.delete('/delete/:id', userController.deleteUser)
 router.get('/getUser/:id', userController.getUser);

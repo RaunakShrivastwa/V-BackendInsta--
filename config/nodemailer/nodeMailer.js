@@ -18,23 +18,23 @@ const transpoter = nodemailer.createTransport({
       },
 });
 
-let renderTemplate = (data, relativepath) => {
+// let renderTemplate = (data, relativepath) => {
  
-    let mainHtml;
-    ejs.renderFile(
-      path.join(__dirname, '../views/mailer', relativepath),
-      data,
-      function (err, template) {
+//     let mainHtml;
+//     ejs.renderFile(
+//       path.join(__dirname, '../views/mailer', relativepath),
+//       data,
+//       function (err, template) {
        
-        if (err) {
-          console.log('There is a problem with the template');
-          return;
-        } else {
-          mainHtml = template;
-        }
-      }
-    );
-    return mainHtml;
-  };
+//         if (err) {
+//           console.log('There is a problem with the template');
+//           return;
+//         } else {
+//           mainHtml = template;
+//         }
+//       }
+//     );
+//     return mainHtml;
+//   };
 
-  export default {transpoter,renderTemplate}
+  export default {transpoter}

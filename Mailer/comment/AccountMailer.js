@@ -4,7 +4,7 @@ export default class AccountMailer{
 
     sendMail = (user)=>{
         
-        let htmlString= nodemailer.renderTemplate({Comment:user},'/main/mainTemplate.ejs')
+z
         nodemailer.transpoter.sendMail({
             from:'javaprogramming58@gmail.com',
             to: user.email,
