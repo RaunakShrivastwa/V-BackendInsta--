@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
 dotenv.config();
-mongoose.connect('mongodb+srv://ASJ:abhi@cluster0.a1i0vnk.mongodb.net/LetsWork');
+mongoose.connect('mongodb+srv://canTech:220831@cantechnology.v9rfpa6.mongodb.net/Can');
 const db = mongoose.connection;
 
 db.on('error', (err) => {
